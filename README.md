@@ -30,16 +30,16 @@ http-server
 
   **Student answer: **
 
-  Hoisting is the way javascript handles variable declarations in their respective scope.
+  Hoisting is the way javascript handles variable declarations in their respective scopes.
 
   Function and variable declarations e.g.
-  'var x' or 'function doSomething() {}' are hoisted and read to establish scope before the function executes.
+  'var x' or 'function doSomething() {}' are hoisted and read immediately to establish scope before the function executes.
 
   Variable and functions expressions, on the other hand are not immediately evaluated.
   eg.
   "x = 'string'" or "var y = function() {}"
 
-  The named variable from the expressions are added to scope, but the values they become equal to are not available until after the expression has run.
+  The named variable from the expressions are added to scope, but the values or functions they are set to be equal to are not available until after the expression has run.
 
 
 1. What is a callback? Why do we use them in JavaScript? Provide your answer, and code a simple example below.
@@ -48,12 +48,10 @@ http-server
 
   A callback is a function passed into another function as a parameter.
 
-  This is useful in a number of cases. For example you could pass a callback function in to an asychronus AJAX request, that does something with data when it's available.
-
-  eg.
-
-  function doFunctoArg(func, arg) {
-    return func(arg);
+  eg
+```
+  function doFunctoArg(fn, arg) {
+    return fn(arg);
   }
 
   function double(x){
@@ -61,6 +59,41 @@ http-server
   } //doubles any arg, x
 
   doFuncToArg(double, 3); //returns 6
+```
+  This is useful in a number of cases. For example you could pass a callback function into an asychronus AJAX request, that does something with data when it's available.
+
+  eg.
+  ```
+  var getData = function(callback){
+
+  $.ajax({
+    url: '../data/****',
+    type: 'GET',
+    dataType: 'json'
+  })
+  .done(function(data) {
+    callback(data);
+  })
+  .fail(function(error) {
+  })
+};
+
+```
+  It can also keep your code dry by allowing you to pass in different functions into otherwise repeated code.
+
+  e.g.
+
+var sayHello = function(){
+  console.log('Hello World');
+};
+
+var repeat = function(fn, times) {
+    for(var i = 0; i < times; i++)
+     fn();
+}
+
+repeat(sayHello, 5);
+
 
 ## Functions and operators
 
@@ -101,11 +134,11 @@ A promise allows you to direct your program to wait until XHR data is available 
 1. Provide a simple example of the syntax for handling a Promise.
   **Student answer:**
 
-  Assuming using the q library, this is how I would make the getAnimals function into a promise;
+  I reworked getAnimals as a promise using jQuery;
 ```
 var getAnimals = function(){
 
-  var deffered = Q.defer();
+  var deferred = $.Deferred();
 
   $.ajax({
     url: '../data/animals.json',
@@ -113,19 +146,19 @@ var getAnimals = function(){
     dataType: 'json'
   })
   .done(function(data) {
-    deffered.resolve(data)
+    deferred.resolve(data);
   })
   .fail(function(error) {
-    deffered.reject(error.message);
+    deferred.reject(error.message);
   })
 
-  return deffered.promise;
+  return deferred.promise();
 
 };
 
-animalsPromise = getAnimals;
+animalsPromise = getAnimals();
 animalsPromise.then(function(promiseData){
-  console.log(promiseData);
+  console.log(promiseData.animals);
 })
 ```
 
